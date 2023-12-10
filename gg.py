@@ -65,8 +65,8 @@ s = ceil(n, 3 * B)
 a = 2 * B
 b = 3 * B - 1
 M0 = portion.closed(a, b)
-print("Initial range", M_range(M0))
-print("Message m0 in range:", padded_message in M0)
+print("Initial range size", M_range(M0))
+print("Message m0 inside search range:", padded_message in M0)
 print()
 print("----------------------------------------")
 print("Step 1: Find smallest s such that c*(s^e) is conforming")
@@ -87,17 +87,17 @@ for r in range(low_r, high_r + 1):
    b1 = floor((3 * B - 1 + r * n), s1)
    M_temp |= portion.closed(a1, b1)
 M0 = M0 & M_temp
-print("Current range", M_range(M0))
-print("Message m0 in range:", padded_message in M0)
+print("Current search range size", M_range(M0))
+print("Message m0 inside search range:", padded_message in M0)
 print()
 print("----------------------------------------")
 
-print("Step 2: Find more s until there is only one residual interval")
+print("Step 2: Find more s until there is only one interval")
 input("Press Enter to continue...")
 
 while not M0.atomic:
    s = s1 + 1
-   print("Current range has more than 1 interval.")
+   print("Current search range consists of more than 1 closed intervals.")
    print("Staring search from s =", s)
    for s1 in range(s, n):
       if s1 % 10000 == 0:
@@ -117,13 +117,13 @@ while not M0.atomic:
       b1 = floor((3 * B - 1 + r * n), s1)
       M_temp |= portion.closed(a1, b1)
    M0 = M0 & M_temp
-   print("Current range", M_range(M0))
-   print("Message m0 in range:", padded_message in M0)
+   print("Current search range", M_range(M0))
+   print("Message m0 inside search range:", padded_message in M0)
 
-print("Current range has only 1 interval left. Continue to step 3.")
+print("Current search range has only 1 interval left. Continue to step 3.")
 print()
 print("----------------------------------------")
-print("Step 3: Binary search on one interval left")
+print("Step 3: Binary search on one single interval")
 input("Press Enter to continue...")
 
 # s = s1
@@ -155,7 +155,10 @@ while True:
       b1 = floor((3 * B - 1 + r * n), s1)
       M_temp |= portion.closed(a1, b1)
    M0 = M0 & M_temp
-   print("Current range", M_range(M0))
+   if M_range(M0) > 2**19:
+      print("Current search range size", M_range(M0), end="\r")
+   else:
+      print("Current search range size", M_range(M0))
    if M0.upper == M0.lower:
       break
    else:
